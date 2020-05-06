@@ -1,0 +1,18 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+#1
+data(mpg)
+library(ggplot2)
+ggplot(mpg, aes(displ,cty)) +
+geom_point(colour="orange")  + facet_wrap(~class)
+```
+
+```{r}
+#2
+ggplot(mpg, aes(cty,displ)) +
+geom_point(colour="orange")  + facet_wrap(~cyl)
+```

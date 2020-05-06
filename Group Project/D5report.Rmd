@@ -1,0 +1,112 @@
+---
+title: "Untitled"
+author: "Santhosh reddy Mallikireddy"
+date: "28/04/2020"
+output:
+  html_document:
+    df_print: paged
+---
+```{r,echo=FALSE, results='hide', message=FALSE,warning=FALSE}
+library(dplyr)
+library(readr)
+library(tidyverse)
+```
+
+```{r,echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+voterdata <- read_csv("voterdata.csv")
+data_NA <- voterdata[sapply(voterdata,anyNA)]
+data_actu <- voterdata[!sapply(voterdata[],anyNA)]
+```
+
+```{r,echo=FALSE}
+#data_new <- data_act[,-c(1,2,4,5,6,7,8,10,11,12,13,16,24,25)]
+#ggplot(voterdata,aes(x=Generation, y = General_Election_Score)) +
+ # geom_col()
+age_GS<-voterdata %>%
+  select("General_Election_Score","Generation","Age") %>%
+  group_by(Generation)  %>% summarise(avg = median(General_Election_Score,na.rm = TRUE))
+ggplot(age_GS,aes(x=reorder(Generation,avg), y= avg)) +
+  geom_bar(stat = "identity",width = 0.5, fill = "steelblue3") + 
+  geom_text(aes(x= Generation,y=avg,label=round(avg,2)), vjust = -0.5)+
+  theme_classic()+
+  theme(axis.line.y = element_blank(),axis.text.y = element_blank(),
+        axis.text.x = element_text(size = 12),
+        axis.title.x = element_text(size = 14),
+        title = element_text(size = 14),
+        axis.ticks = element_blank())+
+  labs(x="Generations",y="")+
+  ggtitle("General Election score for different Generations")
+```
+
+```{r,echo=FALSE}
+ggplot(voterdata, aes(x= Age, fill = Generation) )+ 
+  geom_histogram(bins = 200)+
+  theme_classic()+
+  scale_y_continuous(expand = c(0,0))+
+  theme(axis.text.x = element_text(size = 12),
+        axis.title.x = element_text(size = 14),
+        title = element_text(size = 14),
+        axis.ticks = element_blank())+
+  labs(x="Age",y="Count")+
+  theme(legend.position = "top",legend.justification = "left", legend.title = element_blank())+
+  ggtitle("Generation Plot for different Age group")
+```
+
+```{r,echo=FALSE}
+x <- voterdata %>% 
+  select("VOTER_STATUS","COUNTY_NUMBER")%>%
+  group_by(VOTER_STATUS) %>% 
+  summarise(Count=n())
+ggplot(x,aes(x=VOTER_STATUS,y=Count))+
+  geom_bar(stat="identity",width = 0.2, fill = "steelblue3") + 
+  geom_text(aes(x=VOTER_STATUS,y= Count, label = Count),vjust = -0.5)+
+  theme_classic()+
+  theme(axis.line.y = element_blank(),axis.text.y = element_blank(),
+        axis.text.x = element_text(size = 12),
+        axis.title.x = element_text(size = 12),
+        title = element_text(size = 14),
+        axis.ticks = element_blank())+
+  labs(x="VOTER STATUS",y="")+
+  ggtitle("General Election score for different Generations")
+```
+
+```{r,echo=FALSE}
+dodger <- position_dodge(width = 0.9)
+PA_gs <- voterdata %>%
+  select("General_Election_Score","Generation","Age","PARTY_AFFILIATION","Race") %>%
+  group_by(PARTY_AFFILIATION)  %>% summarise(avg = median(General_Election_Score,na.rm = TRUE))
+ggplot(PA_gs,aes(x= reorder(PARTY_AFFILIATION,avg), y= avg) )+
+  geom_bar(stat = "identity", width = 0.5,position = "dodge", fill = "steelblue3") + 
+  geom_text(aes(x= PARTY_AFFILIATION,y= avg, label = round(avg,2)),position = dodger,vjust = -0.5)+
+  theme_classic()+
+  theme(axis.line.y = element_blank(),axis.text.y = element_blank(),
+        axis.text.x = element_text(size = 12),
+        axis.title.x = element_text(size = 12),
+        title = element_text(size = 12),
+        axis.ticks = element_blank())+
+  labs(x="Party Affiliation",y="")+
+  theme(legend.position = "")+
+  ggtitle("General Election score of people affiliated to different parties")
+```
+
+```{r,fig.width=14,echo=FALSE}
+dodger <- position_dodge(width = 0.9)
+PA_gs <- voterdata %>%
+  select("General_Election_Score","Generation","Age","PARTY_AFFILIATION") %>%
+  group_by(Generation,PARTY_AFFILIATION)  %>% summarise(Count= n())
+ggplot(PA_gs,aes(x= Generation, y= Count, fill= PARTY_AFFILIATION) ) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(x= Generation,y=Count,label=Count),position = dodger,hjust = -0.005)+
+  theme_classic()+
+  labs(x="Generations",y="")+
+  coord_flip()+
+  theme(legend.position = "top",legend.justification = "left", legend.title = element_blank())+
+  theme(axis.line.x = element_blank(),axis.text.x = element_blank(),
+        axis.text.y = element_text(face = "bold",size = 14),
+        axis.title.y = element_text(size = 16),
+        legend.text = element_text(size = 14),
+        title = element_text(size = 18))+
+  ggtitle("No. Of people affiliated to a party based on Generations")
+
+```
+

@@ -1,0 +1,125 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+#1
+data(economics)
+library(ggplot2)
+ggplot(economics, aes(date, unemploy)) +  geom_line() + 
+    		labs(title="Unemployment Rates",  y="Unemployment",  x="Year",  caption="Unemployment Rates") 
+
+```
+
+```{r}
+#2
+data(mpg)
+library(ggplot2)
+library(dplyr)
+p <- ggplot(mpg, aes(displ, cty)) +
+  geom_point(
+    data = filter(mpg, manufacturer == "audi"), 
+    colour = "red",
+    size = 3
+  ) +
+  geom_point() 
+p + 
+  annotate(
+    geom = "curve", x = 3, y = 35, xend = 2.8, yend = 20, 
+    curvature = .3, arrow = arrow(length = unit(2, "mm"))
+  ) +
+  annotate(geom = "text", x = 3.1, y = 35, label = "Audi", hjust = "left")
+
+```
+
+```{r}
+#2
+data(mpg)
+library(ggplot2)
+library(ggforce)
+library("gghighlight")
+ggplot(mpg, aes(displ, hwy)) +
+  geom_point() + 
+  ggforce::geom_mark_ellipse(aes(label = cyl, group = cyl))
+ggplot(mpg, aes(displ, cty, 
+            colour = factor(drv))) +
+  geom_point() + 
+  gghighlight::gghighlight() + 
+  facet_wrap(vars(drv))
+
+
+```
+
+```{r}
+#3
+data(mpg)
+library(ggplot2)
+library(ggforce)
+library("gghighlight")
+ggplot(mpg, aes( displ,cty)) + 
+  geom_point() + 
+  geom_smooth()
+
+ggplot(mpg, aes(cty,displ)) + 
+  geom_point() + 
+  geom_smooth()
+
+ggplot(mpg, aes(displ, cty)) + 
+  geom_point() + 
+  geom_smooth() + 
+  coord_flip()
+
+
+
+```
+
+```{r}
+#4
+data(mpg)
+library(ggplot2)
+library(ggforce)
+library("gghighlight")
+library(dplyr)
+p <- ggplot(mpg, aes(displ, cty)) +
+  geom_point(
+    data = filter(mpg, manufacturer == "honda"), 
+    colour = "red",
+    size = 3
+  ) +
+  geom_point() 
+p + 
+  annotate(
+    geom = "curve", x = 3, y = 35, xend = 2, yend = 25, 
+    curvature = .3, arrow = arrow(length = unit(2, "mm"))
+  ) +
+  annotate(geom = "text", x = 3.1, y = 35, label = "Honda", hjust = "left")
+
+
+
+```
+
+```{r}
+#5
+data(mpg)
+library(ggplot2)
+library(ggforce)
+library("gghighlight")
+library(dplyr)
+
+ggplot(mpg, aes(displ, cty)) +
+  geom_point() + 
+  ggforce::geom_mark_ellipse(aes(label = class, group = class))
+
+#6
+
+ggplot(mpg, aes(displ, cty, 
+            colour = factor(trans))) +
+  geom_point() + 
+  gghighlight::gghighlight() + 
+  facet_wrap(vars(trans), ncol = 3)
+
+
+
+```
+

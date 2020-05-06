@@ -1,0 +1,35 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+#1
+data(economics)
+library(ggplot2)
+ggplot(economics, aes(date, pop)) + geom_line()
+```
+
+```{r}
+#2
+data(economics)
+library(ggplot2)
+ggplot(economics, aes(date, unemploy)) +  geom_line()
+```
+
+```{r}
+#3
+data(economics)
+library(ggplot2)
+ggplot(economics, aes(date, uempmed)) +  geom_line()
+```
+
+```{r}
+#4
+data(economics)
+library(ggplot2)
+economics$unemploy_pop<-economics$unemploy/economics$pop
+economics$year<-as.numeric(format(economics$date, "%Y"))
+ggplot(economics, aes(unemploy_pop, uempmed, color=year)) + geom_path() + geom_point()
+```
+

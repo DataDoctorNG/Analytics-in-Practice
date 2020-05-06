@@ -1,0 +1,39 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+#1
+data(mpg)
+library(ggplot2)
+ggplot(mpg, aes(hwy)) + geom_histogram()
+```
+
+```{r}
+#2
+data(mpg)
+library(ggplot2)
+ggplot(mpg, aes(hwy)) + geom_freqpoly()
+```
+
+```{r}
+#3
+data(mpg)
+library(ggplot2)
+ggplot(mpg, aes(hwy)) + geom_boxplot()
+```
+
+```{r}
+#6
+data(mpg)
+library(ggplot2)
+ggplot(mpg, aes(cty, fill = drv)) +   geom_histogram(binwidth = 0.5) +  facet_wrap(~drv, ncol = 1)
+```
+
+```{r}
+#7
+data(mpg)
+library(ggplot2)
+ggplot(mpg, aes(hwy, colour=class)) + geom_freqpoly(binwdith=500)
+```

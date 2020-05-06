@@ -1,0 +1,42 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+
+df <- read.csv("C:/Users/nicho/Google Drive/School/Graduate School/Kent State/Spring 2020/Analytics In Practice/NPPES/npidata_pfile.csv", header = TRUE, sep=",", skip=100000, nrows=100000)
+```
+
+```{r}
+#85 unique geographic areas
+length(unique(df[,c("OR.1")]))
+```
+
+```{r}
+#80,137 distinct names
+library(dplyr)
+distinct(df, CAMPBELL, R., CLAIRE)
+```
+
+```{r}
+#We notice duplicates in the DR column
+summary(data.frame(duplicated(df[,c("DR.")])))
+```
+
+```{r}
+library(e1071)
+mean(is.na(df))
+a <- impute(df, what = c("median"))
+head(a)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.

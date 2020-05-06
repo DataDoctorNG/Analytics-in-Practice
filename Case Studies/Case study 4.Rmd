@@ -1,0 +1,36 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+#1
+data(mpg)
+library(ggplot2)
+ggplot(mpg, aes(x=displ, y = cty)) +  geom_point(colour="green") + geom_smooth()
+```
+
+```{r}
+#2
+data(mpg)
+library(ggplot2)
+ggplot(mpg, aes(x=displ, y = cty)) + geom_point(colour="green") +
+  	geom_smooth(method = "lm")
+
+```
+
+```{r}
+#3
+data(mpg)
+library(ggplot2)
+ggplot(mpg, aes(x=displ, y = cty)) +  geom_point(colour="red") + geom_smooth(span=0.4)
+
+```
+
+```{r}
+#6
+data(mpg)
+library(ggplot2)
+ggplot(mpg, aes(x=displ, y = cty)) +  geom_point(colour="red") + geom_smooth(span=0.25)
+
+```

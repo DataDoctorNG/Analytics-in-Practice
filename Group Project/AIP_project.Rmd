@@ -1,0 +1,177 @@
+---
+title: "Project Work"
+output: 
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: haddock
+---
+
+## Libraries
+
+
+Loading required libraries in the workspace
+```{r,message=FALSE,warning=FALSE}
+library(tidyverse)
+library(caret)
+library(gmodels)
+library(pROC)
+library(rpart)
+```
+
+## Importing data
+
+
+Data file is in the format of .csv, hence using read_csv() function from readr library
+```{r,message=FALSE,warning=FALSE}
+dataset <- read_csv("bq-results-20200425-211531-g3fvp7c3dbh1.csv")
+```
+
+
+## Data cleaning and preprocessing
+
+
+Omitting the columns which have NA values.
+```{r,warning=FALSE}
+# Columns with missing values
+data_na <- dataset[sapply(dataset,anyNA)]
+# Columns without missing values
+data_act <- dataset[!sapply(dataset,anyNA)]
+anyNA(data_act)
+```
+
+
+Considering the columns which have very minimal missing values.
+```{r}
+data_na<- data_na[colSums(is.na(data_na)) < 100]
+data_act <- dataset[!sapply(dataset,anyNA)] %>% mutate(Dem_Primary_Election_Score=data_na$Dem_Primary_Election_Score,
+                                                         General_Election_Score=data_na$General_Election_Score,
+                                                         Repub_Primary_Election_Score=data_na$Repub_Primary_Election_Score)
+```
+
+
+Excluding the columns which are not significant to the prediction.
+```{r,warning=FALSE}
+data_pred <- data_act[,-c(1,3,4,5,6,8,9,10,11,14,15,22)] %>% mutate_if(is.character,as.factor)
+```
+
+
+Imputing the missing values using **medain imputation technique**
+```{r}
+anyNA(data_pred)
+impute <- preProcess(data_pred,method = "medianImpute")
+data_pred <- predict(impute,data_pred)
+anyNA(data_pred)
+```
+
+
+Creating dummy variables for categorical values which are of interger datatype.
+```{r,warning=FALSE}
+data_pred <- fastDummies::dummy_columns(data_pred)
+data_pred <- data_pred [!sapply(data_pred,is.factor)]
+```
+
+
+Partitioning the data into train and test splits.
+```{r,warning=FALSE}
+set.seed(2000) 
+
+# Creating the sample index 
+index <- createDataPartition(data_pred$CONGRESSIONAL_DISTRICT,p=0.7,list=FALSE)
+
+train<- data_pred[index,]
+test <- data_pred[-index,]
+```
+
+
+## Model Construction
+
+We observe the target variable has binary class (either "1" or "0"). So, Logsitic regression would perform well on binary level classification.
+
+
+### Logistic Regression
+
+```{r,warning=FALSE}
+model <- glm(GENERAL_11_08_2016~.,data=train,family = "binomial")
+```
+
+
+Predicting the target variables
+```{r,warning=FALSE}
+pred <- predict(model,test,type="response")
+pred1 <- ifelse(pred > 0.5,1,0)
+```
+
+
+**Cross Validation:**
+```{r,warning=FALSE}
+CrossTable(pred1,test$GENERAL_11_08_2016)
+```
+
+
+**Confusion Matrix** of the classification
+```{r,warning=FALSE}
+(c1 <- confusionMatrix(factor(pred1),factor(test$GENERAL_11_08_2016)))
+```
+
+
+**ROC**
+```{r,warning=FALSE,message=FALSE}
+ROC <- roc(pred1,test$GENERAL_11_08_2016)
+auc(ROC)
+```
+
+
+**Plot of ROC curve**
+
+
+```{r,echo= FALSE,warning=FALSE}
+plot(ROC,col="blue")
+```
+
+From the above model,the accuracy of the model is `r c1$overall[[1]]`.
+
+
+Verifying the model accuracy with decision trees.
+
+
+### Decision Tree
+
+Model using pre-prunning technique with maximum depth of tree as 6
+```{r,warning=FALSE}
+model_tree <- rpart(GENERAL_11_08_2016 ~., data=train,method = "class",control = rpart.control(cp=0,maxdepth = 6))
+```
+
+
+Predicting the Target Variable
+```{r,warning=FALSE}
+pred_tress <- predict(model_tree,test,type="class")
+```
+
+
+**Cross Validation:**
+```{r,warning=FALSE}
+CrossTable(pred_tress,test$GENERAL_11_08_2016)
+```
+
+
+**Confusion Matrix** of the classification
+```{r,warning=FALSE}
+(c2<-confusionMatrix(pred_tress,factor(test$GENERAL_11_08_2016)))
+```
+
+
+**ROC**
+```{r,warning=FALSE,message=FALSE}
+ROC_tree <- roc(pred_tress,test$GENERAL_11_08_2016)
+auc(ROC_tree)
+```
+
+
+**Plot of ROC curve**
+
+
+```{r,echo=FALSE,warning=FALSE}
+plot(ROC_tree,col="blue")
+```
+
+From the above model,the accuracy of the model is `r c2$overall[[1]]`.

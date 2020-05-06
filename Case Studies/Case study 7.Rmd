@@ -1,0 +1,19 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+#1
+data("diamonds")
+library(ggplot2)
+ggplot(diamonds, aes(x=carat, y = y)) +  geom_point(colour="red") + geom_smooth(span=0.25)
+```
+
+```{r}
+#2
+data("diamonds")
+library(ggplot2)
+ggplot(diamonds, aes(price, fill = cut)) +  geom_density(colour="red")+  facet_wrap(~cut, ncol = 2)
+```
+

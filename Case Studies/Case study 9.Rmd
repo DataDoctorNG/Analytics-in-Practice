@@ -1,0 +1,80 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+#1
+library(ggplot2)
+data(mpg)
+p<-ggplot(mpg, aes(displ, hwy))
+p
+
+```
+
+```{r}
+#2
+data(mpg)
+library(ggplot2)
+library(dplyr)
+p + layer(
+  mapping = NULL, 
+  data = NULL,
+  geom = "point", 
+  stat = "identity",
+  position = "identity"
+)
+
+
+```
+
+```{r}
+#3
+data(mpg)
+library(ggplot2)
+library(dplyr)
+p + layer(
+  mapping = NULL, 
+  data = NULL,
+  geom = "point", 
+  stat = "identity",
+  position = "identity"
+)+geom_point(colour="red")
+
+
+```
+
+```{r}
+#4
+data(mpg)
+library(ggplot2)
+library(dplyr)
+ggplot(mpg, aes(displ, hwy, colour = class)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE) +
+  theme(legend.position = "none")
+
+ggplot(mpg, aes(displ, hwy)) + 
+  geom_point(aes(colour = class)) + 
+  geom_smooth(method = "lm", se = FALSE) + 
+  theme(legend.position = "none")
+
+```
+
+```{r}
+#5
+data(mpg)
+library(ggplot2)
+library(dplyr)
+ggplot(mpg, aes(displ, hwy)) + 
+  geom_point() +
+  geom_smooth(aes(colour = "loess"), method = "loess", se = FALSE) + 
+  geom_smooth(aes(colour = "lm"), method = "lm", se = FALSE) +
+  labs(colour = "Method")
+
+
+
+
+```
+
+
